@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">desafio2DSM</string>
+
+    <string name="app_name">Good Travel</string>
+
+    <string name="login_titulo">Bienvenido</string>
+    <string name="correo_hint">Ingrese su corrreo</string>
+    <string name="password_hint">Ingrese su contraseña</string>
+
+    <string name="btn_login">Entrar</string>
+    <string name="btn_registro">Registrarse</string>
+
+    <string name="no_cuenta">¿No tienes cuentaa?</string>
+
+    <string name="error_correo">Ingrese el correo</string>
+    <string name="error_correo_invalido">Correo inválido</string>
+    <string name="error_password">Ingrese la contraseña</string>
+
+    <string name="login_exitoso">Bienvenido</string>
+    <string name="login_error">Credenciales incorrectas</string>
+
 </resources>
