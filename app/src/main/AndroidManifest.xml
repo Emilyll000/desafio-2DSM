@@ -15,10 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Desafio2DSM">
         <activity
-            android:name=".DestinoAdapterActivity"
+            android:name=".DestinoActivity"
             android:exported="false" />
         <activity
-            android:name=".DestinoActivity"
+            android:name=".Destino"
+            android:exported="false" />
+        <activity
+            android:name=".itemdestinoActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DestinoAdapterActivity"
             android:exported="false" />
         <activity
             android:name=".AddDestinoActivity"
