@@ -1,22 +1,17 @@
 <resources>
-
         <string name="app_name">Good Travel</string>
 
         <string name="correo_hint">Ingrese su correo</string>
         <string name="password_hint">Ingrese su contraseña</string>
-
         <string name="btn_login">Iniciar sesión</string>
         <string name="btn_registro">Registrarse</string>
-
         <string name="no_cuenta">¿No tienes cuenta?</string>
-
         <string name="error_correo">Ingrese el correo</string>
         <string name="error_correo_invalido">Correo inválido</string>
         <string name="error_password">Ingrese su contraseña</string>
-
         <string name="login_exitoso">Bienvenido</string>
         <string name="login_error">Credenciales incorrectas</string>
-
         <string name="logo_desc">Logo de la aplicación</string>
 
+        <string name="precio_formato">Precio: $%1$.2f</string>
 </resources>
