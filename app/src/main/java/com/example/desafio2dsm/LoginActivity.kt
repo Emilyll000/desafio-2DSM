@@ -39,14 +39,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         btnGoRegister.setOnClickListener {
-            Toast.makeText(this, "CLICK OK", Toast.LENGTH_SHORT).show()
-
-            try {
-                startActivity(Intent(this, RegisterActivity::class.java))
-            } catch (e: Exception) {
-                Toast.makeText(this, "ERROR: ${e.message}", Toast.LENGTH_LONG).show()
-                e.printStackTrace()
-            }
+            startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
 
@@ -54,13 +47,18 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
+
                     Toast.makeText(this, "Bienvenido", Toast.LENGTH_SHORT).show()
-                    startActivity(Intent(this, MainActivity::class.java))
+
+                    startActivity(Intent(this, DestinoActivity::class.java))
                     finish()
+
                 } else {
-                    task.exception?.printStackTrace()
-                    Toast.makeText(this, "Error: ${task.exception?.message}",
-                        Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        "Error: ${task.exception?.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
     }

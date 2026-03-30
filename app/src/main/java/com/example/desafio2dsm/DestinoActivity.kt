@@ -1,8 +1,8 @@
 package com.example.desafio2dsm
 
+import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.ProgressBar
+import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,66 +11,54 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class DestinoActivity : AppCompatActivity() {
 
-    private lateinit var rvDestinos: RecyclerView
-    private lateinit var progress: ProgressBar
-
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: DestinoAdapter
     private val lista = mutableListOf<Destino>()
-    private val adapter by lazy { DestinoAdapter(lista) }
-
-    private val db: FirebaseFirestore by lazy { FirebaseFirestore.getInstance() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_destino)
 
-        rvDestinos = findViewById(R.id.rvDestinos)
-        progress = findViewById(R.id.progress)
+        recyclerView = findViewById(R.id.recyclerDestinos)
+        val btnAgregar = findViewById<Button>(R.id.btnAgregar)
 
-        rvDestinos.layoutManager = LinearLayoutManager(this)
-        rvDestinos.setHasFixedSize(true)
-        rvDestinos.adapter = adapter
+        adapter = DestinoAdapter(lista)
+        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.adapter = adapter
 
-        cargarDestinos()
+        btnAgregar.setOnClickListener {
+            startActivity(Intent(this, AddDestinoActivity::class.java))
+        }
+
+        cargarDatos()
     }
 
-    private fun cargarDestinos() {
-        progress.visibility = View.VISIBLE
+    override fun onResume() {
+        super.onResume()
+        cargarDatos() //
+    }
 
-        // ⚠️ NO usar argumentos con nombre aquí. Es Java API.
+    private fun cargarDatos() {
+        val db = FirebaseFirestore.getInstance()
+
         db.collection("destinos")
             .get()
             .addOnSuccessListener { result ->
+
                 lista.clear()
-                for (document in result) {
-                    // Opción 1: mapeo manual (seguro si los tipos varían)
-                    val destino = Destino(
-                        id = document.id,
-                        nombre = document.getString("nombre") ?: "",
-                        pais = document.getString("pais") ?: "",
-                        precio = document.getDouble("precio") ?: 0.0,
-                        descripcion = document.getString("descripcion") ?: "",
-                        imagenUrl = document.getString("imagenUrl") ?: ""
-                    )
+
+                for (doc in result) {
+                    val destino = doc.toObject(Destino::class.java)
+
+                    destino.id = doc.id
+
                     lista.add(destino)
-
-                    // --- Opción 2 (alternativa): usar toObject y luego copiar el id ---
-                    // val d = document.toObject(Destino::class.java).copy(id = document.id)
-                    // lista.add(d)
                 }
+
                 adapter.notifyDataSetChanged()
-                progress.visibility = View.GONE
-
-                if (lista.isEmpty()) {
-                    Toast.makeText(this, getString(R.string.sin_datos), Toast.LENGTH_SHORT).show()
-                }
             }
             .addOnFailureListener { e ->
-                progress.visibility = View.GONE
-                Toast.makeText(
-                    this,
-                    getString(R.string.error_cargar, e.localizedMessage ?: ""),
-                    Toast.LENGTH_LONG
-                ).show()
+                Toast.makeText(this, "Error: ${e.message}", Toast.LENGTH_LONG).show()
             }
     }
 }

@@ -1,75 +1,110 @@
 package com.example.desafio2dsm
 
 import android.os.Bundle
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 
 class AddDestinoActivity : AppCompatActivity() {
-
-    private lateinit var etNombre: EditText
-    private lateinit var etPais: EditText
-    private lateinit var etPrecio: EditText
-    private lateinit var etDescripcion: EditText
-    private lateinit var etImagen: EditText
-    private lateinit var btnGuardar: Button
-
-    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_destino)
 
-        etNombre = findViewById(R.id.etNombre)
-        etPais = findViewById(R.id.etPais)
-        etPrecio = findViewById(R.id.etPrecio)
-        etDescripcion = findViewById(R.id.etDescripcion)
-        etImagen = findViewById(R.id.etImagen)
-        btnGuardar = findViewById(R.id.btnGuardar)
+        val etNombre = findViewById<TextInputEditText>(R.id.etNombre)
+        val spPais = findViewById<Spinner>(R.id.spPais)
+        val etPrecio = findViewById<TextInputEditText>(R.id.etPrecio)
+        val etDescripcion = findViewById<TextInputEditText>(R.id.etDescripcion)
+        val etImagenUrl = findViewById<TextInputEditText>(R.id.etImagenUrl)
+        val btnGuardar = findViewById<Button>(R.id.btnGuardar)
+        val progress = findViewById<ProgressBar>(R.id.progress)
 
-        db = FirebaseFirestore.getInstance()
+        val paises = arrayOf(
+            "Seleccione país",
+            "El Salvador",
+            "México",
+            "España",
+            "Estados Unidos",
+            "Colombia",
+            "Argentina"
+        )
 
-        btnGuardar.setOnClickListener { guardarDestino() }
+        val adapterSpinner = ArrayAdapter(
+            this,
+            android.R.layout.simple_spinner_dropdown_item,
+            paises
+        )
+
+        spPais.adapter = adapterSpinner
+
+        btnGuardar.setOnClickListener {
+
+            val nombre = etNombre.text.toString().trim()
+            val pais = spPais.selectedItem.toString()
+            val precio = etPrecio.text.toString().toDoubleOrNull()
+            val descripcion = etDescripcion.text.toString().trim()
+            val imagenUrl = etImagenUrl.text.toString().trim()
+
+            if (nombre.isEmpty()) {
+                etNombre.error = "Campo obligatorio"
+                return@setOnClickListener
+            }
+
+            if (pais == "Seleccione país") {
+                Toast.makeText(this, "Seleccione un país", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            if (precio == null || precio <= 0) {
+                etPrecio.error = "Precio inválido"
+                return@setOnClickListener
+            }
+
+            if (descripcion.length < 20) {
+                etDescripcion.error = "Mínimo 20 caracteres"
+                return@setOnClickListener
+            }
+
+            if (imagenUrl.isEmpty()) {
+                etImagenUrl.error = "Ingrese URL de imagen"
+                return@setOnClickListener
+            }
+
+            progress.visibility = View.VISIBLE
+
+            guardarEnFirebase(nombre, pais, precio, descripcion, imagenUrl, progress)
+        }
     }
 
-    private fun guardarDestino() {
-        val nombre = etNombre.text.toString()
-        val pais = etPais.text.toString()
-        val precio = etPrecio.text.toString()
-        val descripcion = etDescripcion.text.toString()
-        val imagen = etImagen.text.toString()
-
-        if (nombre.isEmpty() || pais.isEmpty() || precio.isEmpty() || descripcion.isEmpty() || imagen.isEmpty()) {
-            Toast.makeText(this, "No dejar campos vacíos", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (descripcion.length < 20) {
-            Toast.makeText(this, "Descripción muy corta", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val precioDouble = precio.toDoubleOrNull()
-        if (precioDouble == null || precioDouble <= 0) {
-            Toast.makeText(this, "Precio inválido", Toast.LENGTH_SHORT).show()
-            return
-        }
+    private fun guardarEnFirebase(
+        nombre: String,
+        pais: String,
+        precio: Double,
+        descripcion: String,
+        imagenUrl: String,
+        progress: ProgressBar
+    ) {
+        val db = FirebaseFirestore.getInstance()
 
         val destino = hashMapOf(
             "nombre" to nombre,
             "pais" to pais,
-            "precio" to precioDouble,
+            "precio" to precio,
             "descripcion" to descripcion,
-            "imagenUrl" to imagen
+            "imagenUrl" to imagenUrl
         )
 
         db.collection("destinos")
             .add(destino)
             .addOnSuccessListener {
+                progress.visibility = View.GONE
                 Toast.makeText(this, "Destino guardado", Toast.LENGTH_SHORT).show()
                 finish()
             }
             .addOnFailureListener {
+                progress.visibility = View.GONE
                 Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show()
             }
     }

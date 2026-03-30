@@ -1,8 +1,5 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <style name="Theme.Desafio2DSM" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowBackground">@android:color/white</item>
-        <item name="colorPrimary">#00695C</item>
-        <item name="colorPrimaryVariant">#004D40</item>
-        <item name="colorSecondary">#26A69A</item>
     </style>
 </resources>

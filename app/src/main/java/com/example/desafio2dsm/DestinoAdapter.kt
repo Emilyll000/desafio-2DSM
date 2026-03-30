@@ -1,23 +1,25 @@
 package com.example.desafio2dsm
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.desafio2dsm.R
+import com.google.firebase.firestore.FirebaseFirestore
 
 class DestinoAdapter(private val lista: MutableList<Destino>) :
     RecyclerView.Adapter<DestinoAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val ivImagen: ImageView = view.findViewById(R.id.ivImagen)
-        val tvNombre: TextView  = view.findViewById(R.id.tvNombre)
-        val tvPrecio: TextView  = view.findViewById(R.id.tvPrecio)
+        val tvNombre: TextView = view.findViewById(R.id.tvNombre)
+        val tvPrecio: TextView = view.findViewById(R.id.tvPrecio)
         val tvDescripcion: TextView = view.findViewById(R.id.tvDescripcion)
+        val imgDestino: ImageView = view.findViewById(R.id.imgDestino)
+        val btnEditar: Button = view.findViewById(R.id.btnEditar)
+        val btnEliminar: Button = view.findViewById(R.id.btnEliminar)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -26,28 +28,61 @@ class DestinoAdapter(private val lista: MutableList<Destino>) :
         return ViewHolder(view)
     }
 
+    override fun getItemCount(): Int = lista.size
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val destino = lista[position]
+        val context = holder.itemView.context
 
         holder.tvNombre.text = destino.nombre
-        holder.tvPrecio.text =
-            holder.itemView.context.getString(R.string.precio_formato, destino.precio)
+        holder.tvPrecio.text = "$${destino.precio}"
         holder.tvDescripcion.text = destino.descripcion
 
-        Glide.with(holder.itemView.context)
+        Glide.with(context)
             .load(destino.imagenUrl)
             .placeholder(R.drawable.placeholder)
-            .into(holder.ivImagen)
+            .error(R.drawable.placeholder)
+            .into(holder.imgDestino)
 
-        holder.itemView.setOnLongClickListener {
-            Toast.makeText(
-                holder.itemView.context,
-                holder.itemView.context.getString(R.string.eliminar_label, destino.nombre),
-                Toast.LENGTH_SHORT
-            ).show()
-            true
+        holder.btnEliminar.setOnClickListener {
+
+            val db = FirebaseFirestore.getInstance()
+
+            AlertDialog.Builder(context)
+                .setTitle("Eliminar destino")
+                .setMessage("¿Seguro que deseas eliminar este destino?")
+                .setPositiveButton("Sí") { _, _ ->
+
+                    db.collection("destinos")
+                        .document(destino.id)
+                        .delete()
+                        .addOnSuccessListener {
+
+                            lista.removeAt(position)
+                            notifyItemRemoved(position)
+
+                            Toast.makeText(context, "Destino eliminado", Toast.LENGTH_SHORT).show()
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_LONG).show()
+                        }
+                }
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
+
+        holder.btnEditar.setOnClickListener {
+
+            val intent = Intent(context, EditDestinoActivity::class.java)
+
+            intent.putExtra("id", destino.id)
+            intent.putExtra("nombre", destino.nombre)
+            intent.putExtra("pais", destino.pais)
+            intent.putExtra("precio", destino.precio)
+            intent.putExtra("descripcion", destino.descripcion)
+            intent.putExtra("imagenUrl", destino.imagenUrl)
+
+            context.startActivity(intent)
         }
     }
-
-    override fun getItemCount(): Int = lista.size
 }

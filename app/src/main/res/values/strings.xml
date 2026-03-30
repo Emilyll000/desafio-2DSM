@@ -14,4 +14,21 @@
 
         <string name="btn_login">Ingresar</string>
         <string name="btn_registro">Ir a registro</string>
+
+        <string name="agregar_destino">Agregar Destino</string>
+        <string name="nombre_destino">Nombre del destino</string>
+        <string name="pais">País</string>
+        <string name="precio">Precio</string>
+        <string name="descripcion">Descripción</string>
+        <string name="descripcion_min_20">mínimo 20 caracteres</string>
+        <string name="imagen_destino">Imagen del destino</string>
+        <string name="seleccionar_imagen">Seleccionar imagen</string>
+        <string name="guardar">Guardar</string>
+        <string name="url_imagen">URL de imagen</string>
+        <string name="imagen_invalida">URL de imagen inválida</string>
+        <string name="cargada_ok">Imagen cargada</string>
+
+        <string name="catalogo_destinos">Catálogo de Destinos</string>
+        <string name="add_destino">Agregar Destino</string>
+
 </resources>

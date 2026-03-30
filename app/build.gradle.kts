@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.example.desafio2dsm"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.desafio2dsm"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
     }
@@ -45,6 +45,8 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
 
     implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.androidx.activity)
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation(platform("com.google.firebase:firebase-bom:33.5.1"))
     implementation("com.google.firebase:firebase-auth-ktx")
