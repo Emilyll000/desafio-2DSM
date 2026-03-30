@@ -59,7 +59,8 @@ class LoginActivity : AppCompatActivity() {
                     finish()
                 } else {
                     task.exception?.printStackTrace()
-                    Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, "Error: ${task.exception?.message}",
+                        Toast.LENGTH_LONG).show()
                 }
             }
     }

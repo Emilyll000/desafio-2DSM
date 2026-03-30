@@ -1,18 +1,17 @@
 <resources>
         <string name="app_name">Agencia de Viajes</string>
 
+        <string name="brand_name">Agencia de Viajes</string>
+        <string name="correo_hint">Correo</string>
+        <string name="password_hint">Contraseña</string>
         <string name="iniciar_sesion">Iniciar sesión</string>
-        <string name="correo">Correo electrónico</string>
-        <string name="contrasena">Contraseña</string>
-        <string name="ingresar">Ingresar</string>
-        <string name="no_cuenta">¿No tienes cuenta?</string>
+        <string name="ir_a_registro">Ir a registro</string>
         <string name="registrarse">Registrarse</string>
+        <string name="no_cuenta">¿No tienes cuenta?</string>
 
-        <string name="sin_datos">No hay destinos para mostrar</string>
-        <string name="error_cargar">Error al cargar: %1$s</string>
+        <string name="campo_obligatorio">Campo obligatorio</string>
+        <string name="login_error">No fue posible iniciar sesión: %1$s</string>
 
-        <string name="precio_formato">S/ %1$.2f</string>
-        <string name="eliminar_label">Eliminar: %1$s</string>
-        <string name="error_guardar">Error al guardar</string>
-        <string name="guardar">Guardar</string>
+        <string name="btn_login">Ingresar</string>
+        <string name="btn_registro">Ir a registro</string>
 </resources>
