@@ -1,7 +1,6 @@
 package com.example.desafio2dsm
 
 import android.os.Bundle
-import android.util.Patterns
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,10 +8,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 class AddDestinoActivity : AppCompatActivity() {
 
     private lateinit var etNombre: EditText
+    private lateinit var etPais: EditText
     private lateinit var etPrecio: EditText
     private lateinit var etDescripcion: EditText
     private lateinit var etImagen: EditText
-    private lateinit var spinnerPais: Spinner
     private lateinit var btnGuardar: Button
 
     private lateinit var db: FirebaseFirestore
@@ -22,36 +21,39 @@ class AddDestinoActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_destino)
 
         etNombre = findViewById(R.id.etNombre)
+        etPais = findViewById(R.id.etPais)
         etPrecio = findViewById(R.id.etPrecio)
         etDescripcion = findViewById(R.id.etDescripcion)
         etImagen = findViewById(R.id.etImagen)
-        spinnerPais = findViewById(R.id.spinnerPais)
         btnGuardar = findViewById(R.id.btnGuardar)
 
         db = FirebaseFirestore.getInstance()
-
-        val paises = listOf("El Salvador", "Guatemala", "Honduras", "Nicaragua", "Costa Rica")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, paises)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerPais.adapter = adapter
 
         btnGuardar.setOnClickListener { guardarDestino() }
     }
 
     private fun guardarDestino() {
-        val nombre = etNombre.text.toString().trim()
-        val pais = spinnerPais.selectedItem.toString()
-        val precio = etPrecio.text.toString().trim()
-        val descripcion = etDescripcion.text.toString().trim()
-        val imagen = etImagen.text.toString().trim()
+        val nombre = etNombre.text.toString()
+        val pais = etPais.text.toString()
+        val precio = etPrecio.text.toString()
+        val descripcion = etDescripcion.text.toString()
+        val imagen = etImagen.text.toString()
 
-        if (nombre.isEmpty()) { etNombre.error = "No puede estar vacío"; return }
-        if (descripcion.isEmpty()) { etDescripcion.error = "No puede estar vacío"; return }
-        if (descripcion.length < 20) { etDescripcion.error = "Descripción muy corta"; return }
+        if (nombre.isEmpty() || pais.isEmpty() || precio.isEmpty() || descripcion.isEmpty() || imagen.isEmpty()) {
+            Toast.makeText(this, "No dejar campos vacíos", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (descripcion.length < 20) {
+            Toast.makeText(this, "Descripción muy corta", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         val precioDouble = precio.toDoubleOrNull()
-        if (precioDouble == null || precioDouble <= 0) { etPrecio.error = "Precio inválido"; return }
-        if (imagen.isEmpty()) { etImagen.error = "Debe ingresar la URL"; return }
-        if (!Patterns.WEB_URL.matcher(imagen).matches()) { etImagen.error = "URL inválida"; return }
+        if (precioDouble == null || precioDouble <= 0) {
+            Toast.makeText(this, "Precio inválido", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val destino = hashMapOf(
             "nombre" to nombre,
@@ -63,7 +65,12 @@ class AddDestinoActivity : AppCompatActivity() {
 
         db.collection("destinos")
             .add(destino)
-            .addOnSuccessListener { Toast.makeText(this, "Destino guardado", Toast.LENGTH_SHORT).show(); finish() }
-            .addOnFailureListener { Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show() }
+            .addOnSuccessListener {
+                Toast.makeText(this, "Destino guardado", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Error al guardar", Toast.LENGTH_SHORT).show()
+            }
     }
 }
